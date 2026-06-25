@@ -1,0 +1,48 @@
+diff --git a/node_modules/@adminjs/mongoose/lib/property.js b/node_modules/@adminjs/mongoose/lib/property.js
+index d878a56..6287a47 100644
+--- a/node_modules/@adminjs/mongoose/lib/property.js
++++ b/node_modules/@adminjs/mongoose/lib/property.js
+@@ -65,7 +65,7 @@ class Property extends BaseProperty {
+     }
+     reference() {
+         const ref = this.isArray()
+-            ? this.mongoosePath.caster.options?.ref
++            ? this.mongoosePath.caster?.options?.ref
+             : this.mongoosePath.options?.ref;
+         if (typeof ref === 'function')
+             return ref.modelName;
+@@ -85,17 +85,30 @@ class Property extends BaseProperty {
+     }
+     subProperties() {
+         if (this.type() === 'mixed') {
+-            const subPaths = Object.values(this.mongoosePath.caster.schema.paths);
+-            return subPaths.map((p) => new Property(p));
++            const schema = this.mongoosePath.caster?.schema || this.mongoosePath.schema;
++            if (schema) {
++                const subPaths = Object.values(schema.paths);
++                return subPaths.map((p) => new Property(p));
++            }
+         }
+         return [];
+     }
+     type() {
+         if (this.isArray()) {
+-            let { instance } = this.mongoosePath.caster;
++            const caster = this.mongoosePath.caster;
++            if (!caster) {
++                // Mongoose 9+: caster may be undefined for arrays
++                // Check schemaOptions or $embeddedSchemaType for type info
++                const embedded = this.mongoosePath.$embeddedSchemaType;
++                if (embedded) {
++                    return this.instanceToType(embedded.instance || 'String');
++                }
++                return 'string';
++            }
++            let { instance } = caster;
+             // For array of embedded schemas mongoose returns null for caster.instance
+             // That is why we have to check if caster has a schema
+-            if (!instance && this.mongoosePath.caster.schema) {
++            if (!instance && caster.schema) {
+                 instance = 'Embedded';
+             }
+             return this.instanceToType(instance);
