@@ -7,7 +7,8 @@ import authRouter from "./routes/user.routes.js";
 import busRouter from "./routes/bus.routes.js";
 import ticketRouter from "./routes/ticket.routes.js";
 import { buildAdminJs } from "./config/setup.js";
-
+import "./cron/busCron.js";
+import { startBusCron } from "./cron/busCron.js";
 dotenv.config();
 
 const app = express();
@@ -29,6 +30,7 @@ const start = async () => {
   try {
     await mongoConnect(process.env.MONGODB_URI);
     await buildAdminJs(app);
+    await startBusCron();
     app.listen({ port: PORT, host: "0.0.0.0" }, (err, address) => {
       if (err) {
         console.log(err);

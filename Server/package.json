@@ -29,6 +29,7 @@
     "google-auth-library": "^10.7.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.2",
+    "node-cron": "^4.5.0",
     "tinymce": "^8.6.0",
     "uuid": "^14.0.1"
   },

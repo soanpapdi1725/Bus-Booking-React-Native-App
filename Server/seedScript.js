@@ -15,7 +15,7 @@ const generateRandomTime = (baseDate) => {
   return dateTime;
 };
 
-const seedDatabase = async () => {
+export const seedDatabase = async () => {
   try {
     mongoose.connect(process.env.MONGODB_URI);
     await Bus.deleteMany();
@@ -101,5 +101,3 @@ const seedDatabase = async () => {
     mongoose.connection.close();
   }
 };
-
-seedDatabase();
