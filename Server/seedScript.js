@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 
 import { buses, generateSeats, locations } from "./seedData.js";
 import Bus from "./models/bus.model.js";
@@ -17,7 +16,6 @@ const generateRandomTime = (baseDate) => {
 
 export const seedDatabase = async () => {
   try {
-    mongoose.connect(process.env.MONGODB_URI);
     await Bus.deleteMany();
     console.log("Old Bus Data Deleted");
     const busesToInsert = [];
@@ -97,7 +95,5 @@ export const seedDatabase = async () => {
     console.log("Database seeded successfully");
   } catch (error) {
     console.log("ERROR SEEDING DATABASE: ", error);
-  } finally {
-    mongoose.connection.close();
   }
 };
