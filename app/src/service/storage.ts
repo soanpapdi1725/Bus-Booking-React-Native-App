@@ -9,7 +9,7 @@ export const setToken = (tokenType: tokenType, token: string) => {
 };
 
 export const getToken = (tokenType: tokenType) => {
-  storage.getString(tokenType);
+  return storage.getString(tokenType);
 };
 
 export const removeToken = (tokenType: tokenType) => {
