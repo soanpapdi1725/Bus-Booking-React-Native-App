@@ -1,12 +1,12 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native';
+import React from 'react';
 
 const LoginScreen = () => {
   return (
-    <View>
+    <View className="text-center">
       <Text>LoginScreen</Text>
     </View>
-  )
-}
+  );
+};
 
-export default LoginScreen
+export default LoginScreen;

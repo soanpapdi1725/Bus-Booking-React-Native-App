@@ -1,8 +1,41 @@
-import { View, Text, Image } from 'react-native';
+import { View, Image, Alert } from 'react-native';
 import React, { useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { getToken } from '../service/storage';
+import { resetAndNavigate } from '../utils/NavigationUtils';
+import { refreshAccessToken } from '../service/request/auth.request';
+interface DecodedToken {
+  exp: number;
+}
 
 const SplashScreen = () => {
-  const tokenCheck = async () => {};
+  const tokenCheck = async () => {
+    const accessToken = getToken('AccessToken') as string;
+    const refreshToken = getToken('RefreshToken') as string;
+
+    if (accessToken) {
+      const decodedAccessToken = jwtDecode<DecodedToken>(accessToken);
+      const decodedRefreshToken = jwtDecode<DecodedToken>(refreshToken);
+      const currentTime = Date.now() / 1000;
+
+      if (decodedRefreshToken?.exp < currentTime) {
+        resetAndNavigate('LoginScreen');
+        Alert.alert('Session Expired, Please Login Again');
+        return;
+      }
+
+      if (decodedAccessToken?.exp < currentTime) {
+        const refreshed = await refreshAccessToken();
+        if (!refreshed) {
+          Alert.alert('There was an Error');
+          return;
+        }
+      }
+      resetAndNavigate('HomeScreen');
+    } else {
+      resetAndNavigate('LoginScreen');
+    }
+  };
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       tokenCheck();
